@@ -1,0 +1,17 @@
+#!/bin/sh
+# When given a partiton device name such as "sdg1", return the ID_VDEV
+# and ID_VDEV_PATH udev variables for the by-vdev device name that is
+# the parent of this partition
+
+DISK=$(echo $1 | tr -d '[0-9]')
+PARTNUM=$(echo $1 | tr -d '[a-z]')
+cd /dev/disk/by-vdev
+for TESTDISK in *; do
+    if [ "$(readlink -f $TESTDISK)" = "/dev/$DISK" ]; then
+        echo ID_VDEV=$TESTDISK
+        echo ID_VDEV_PATH=disk/by-vdev/$TESTDISK
+        exit
+    fi
+done
+
+# Located at /usr/local/bin/udev-vdev-partition-map
